@@ -1,0 +1,25 @@
+{
+  "name": "routedsl",
+  "main": "index.js",
+  "version": "0.1.0",
+  "authors": [
+    "Gilles Coomans <gilles.coomans@gmail.com>"
+  ],
+  "description": "Small route DSL",
+  "moduleType": [
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "route"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/nomocas/routedsl",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
