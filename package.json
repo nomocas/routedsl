@@ -1,13 +1,14 @@
 {
   "name": "routedsl",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Small route DSL",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "build": "browserify -s routedsl index.js > dist/routedsl.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,9 @@
     "url": "https://github.com/nomocas/routedsl/issues"
   },
   "homepage": "https://github.com/nomocas/routedsl",
+  "dependencies": {
+    "elenpi": "^0.2.5"
+  },
   "devDependencies": {
     "chai": "^2.2.0",
     "gulp": "^3.9.0",
