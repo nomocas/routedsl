@@ -135,7 +135,12 @@
 				index: 0,
 				output: {}
 			};
-		}
+		} else
+			descriptor = {
+				route: descriptor.route,
+				index: !this.parsed.local ? 0 : descriptor.index,
+				output: {}
+			};
 		if (!this.parsed.match(descriptor))
 			return false;
 		return descriptor;
