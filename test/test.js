@@ -11,18 +11,25 @@ else
 
 var expect = chai.expect;
 
-describe("...", function() {
+describe("local", function() {
+	var url = '/bloupi/lollipop/foo/bar';
 
-	/*
-		it("should", function() {
-			expect(res).to.deep.equals({
-				"filters": [{
-					method: "hello"
-				}, {
-					method: "world"
-				}],
-				decorated: true
-			});
+	var route = new routedsl('/s:bloupi/s:lollipop');
+	var route2 = new routedsl('./s:foo/s:bar');
+
+	var desc = route.match(url);
+	var desc2 = route2.match(desc);
+
+	it("should", function() {
+		expect(desc.index).to.equals(2)
+		expect(desc.output).to.deep.equals({
+			bloupi: 'bloupi',
+			lollipop: 'lollipop'
 		});
-	*/
+		expect(desc2.index).to.equals(4)
+		expect(desc2.output).to.deep.equals({
+			foo: 'foo',
+			bar: 'bar'
+		});
+	});
 });
