@@ -33,3 +33,15 @@ describe("local", function() {
 		});
 	});
 });
+
+describe("end at root", function() {
+	var url = '/';
+	var route = new routedsl('/$');
+	var desc = route.match(url);
+
+	it("should", function() {
+		expect(desc).to.not.equals(false);
+		expect(desc.index).to.equals(0);
+		expect(desc.output).to.deep.equals({});
+	});
+});
