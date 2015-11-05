@@ -7,8 +7,6 @@ Small route DSL.
 ```shell
 npm i routedsl
 # or
-bower i routedsl
-# or
 git clone https://github.com/nomocas/routedsl.git
 ```
 
