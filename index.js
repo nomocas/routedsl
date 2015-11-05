@@ -3,7 +3,7 @@
 (function() {
 	'use strict';
 
-	var elenpi = require('elenpi/index'),
+	var elenpi = require('elenpi'),
 		r = elenpi.r;
 
 	var casting = {
@@ -82,7 +82,7 @@
 
 	RouteStep.prototype.match = function(descriptor) {
 		var ok = false;
-		if (descriptor.route.length > descriptor.index) {
+		if (descriptor.route.length >= descriptor.index) {
 			if (this.end) {
 				if (descriptor.index === descriptor.route.length)
 					ok = true;
@@ -118,6 +118,7 @@
 	};
 
 	var Route = function(route) {
+		this.original = route;
 		this.parsed = parser.parse(route);
 		if (!this.parsed)
 			throw new Error('route could not be parsed : ' + route);
@@ -138,7 +139,7 @@
 		} else
 			descriptor = {
 				route: descriptor.route,
-				index: !this.parsed.local ? 0 : descriptor.index,
+				index: this.parsed.local ? descriptor.index : 0,
 				output: {}
 			};
 		if (!this.parsed.match(descriptor))
