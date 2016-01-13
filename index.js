@@ -71,7 +71,11 @@
 			.oneOf(null, [r().rule('cast').rule('key'), 'end', 'disjonction', 'block']),
 
 		route: r()
-			.regExp(/^\./, true, 'local')
+			.regExp(/^\.|>/, true, function(descriptor, cap) {
+				descriptor.local = true;
+				if (cap[0] === '>')
+					descriptor.lastMatched = true;
+			})
 			.regExp(/^\//)
 			.rule('steps')
 	};
@@ -97,7 +101,7 @@
 			} else if (this.cast) { // casted variable
 				var res = this.cast(descriptor.route[descriptor.index]);
 				if (res !== null) {
-					descriptor.output[this.key] = res;
+					descriptor.params[this.key] = res;
 					descriptor.index++;
 					ok = true;
 				}
@@ -117,11 +121,23 @@
 		return new RouteStep();
 	};
 
+	function Match(route, index) {
+		this.route = route;
+		this.index = index;
+		this.params = {};
+	}
+
+	Match.prototype.toString = function() {
+		return '/' + this.route.join('/') + ' (' + this.index + ':' + JSON.stringify(this.params) + ')';
+	};
+
 	var Route = function(route) {
 		this.original = route;
 		this.parsed = parser.parse(route);
 		if (!this.parsed)
 			throw new Error('route could not be parsed : ' + route);
+		if (this.parsed.lastMatched)
+			this.lastMatched = this.parsed.lastMatched;
 	};
 
 	Route.prototype.match = function(descriptor) {
@@ -131,17 +147,9 @@
 				route.shift();
 			if (route[route.length - 1] === '')
 				route.pop();
-			descriptor = {
-				route: route,
-				index: 0,
-				output: {}
-			};
+			descriptor = new Match(route, 0);
 		} else
-			descriptor = {
-				route: descriptor.route,
-				index: this.parsed.local ? descriptor.index : 0,
-				output: {}
-			};
+			descriptor = new Match(descriptor.route, this.parsed.local ? descriptor.index : 0);
 		if (!this.parsed.match(descriptor))
 			return false;
 		return descriptor;
