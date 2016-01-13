@@ -17,7 +17,7 @@ var Route = require('routedsl');
 var route = new Route('/hello/s:arg'),
 	matched = route.match('/hello/world');
 
-// matched = { index: 2, route: ['hello', 'world'], output: { arg:'world' } }	
+// matched = { index: 2, route: ['hello', 'world'], params: { arg:'world' } }	
 ```
 
 ## Syntax
@@ -33,7 +33,7 @@ Full example : `/campaign/?s:id/update/?q:query/?[(i:start/i:end)/$,$]`
 ```javascript
 var route = new Route('/foo/i:bar');
 var matched = route.match('/foo/12');
-// matched = { index:2, route:['foo', '12'], output:{ bar:12 } };
+// matched = { index:2, route:['foo', '12'], params:{ bar:12 } };
 ```
 
 List of casting :
