@@ -23,10 +23,10 @@
 			return null;
 		},
 		q: function(input) { // query
-			return (input[0] !== '?') ? null : input;
+			return (input && input[0] !== '?') ? null : input;
 		},
 		s: function(input) { // string
-			return (input[0] == '?') ? null : input;
+			return (input && input[0] == '?') ? null : input;
 		}
 	};
 
