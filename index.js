@@ -31,6 +31,7 @@
 	};
 
 	var rules = {
+		// disjonction (array style) : .../[route1, route2]
 		disjonction: r()
 			.regExp(/^\[\s*/)
 			.oneOrMore('disjonction',
@@ -39,6 +40,7 @@
 			)
 			.regExp(/^\s*\]/),
 
+		// parts casting : /s:myString/i:myInt
 		cast: r()
 			.regExp(/^([\w-_]+):/, true, function(descriptor, cap) {
 				descriptor.cast = casting[cap[1]];
@@ -46,23 +48,28 @@
 					throw new Error('routes : no cast method as : ' + cap[1]);
 			}),
 
+		// end :   .../$
 		end: r()
 			.regExp(/^\$/, false, 'end'),
 
+		// a step is what's between slashes
 		steps: r()
 			.zeroOrMore('steps',
 				r().rule('xpr'),
 				r().regExp(/^\//)
 			),
 
+		// route block (/.../...)
 		block: r()
 			.regExp(/^\(\s*/)
 			.rule('steps')
 			.regExp(/^\s*\)/),
 
+		// any fixed part
 		key: r()
 			.regExp(/^[0-9\w-_\.]+/, false, 'key'),
 
+		// any step could start with ?(for optional part) or with (for part negation)
 		xpr: r()
 			.oneOf(null, [
 				r().regExp(/^\!/, false, 'not'),
@@ -70,6 +77,7 @@
 			], true)
 			.oneOf(null, [r().rule('cast').rule('key'), 'end', 'disjonction', 'block']),
 
+		// starting rule
 		route: r()
 			.regExp(/^\.|>/, true, function(descriptor, cap) {
 				descriptor.local = true;
@@ -105,15 +113,18 @@
 					descriptor.index++;
 					ok = true;
 				}
-			} else if (descriptor.route[descriptor.index] === this.key) {
-				descriptor.index++;
+			} else if (this.key) {
+				if (descriptor.route.length && descriptor.route[descriptor.index] === this.key) {
+					descriptor.index++;
+					ok = true;
+				}
+			} else
 				ok = true;
-			}
 		}
 		if (this.not)
 			ok = !ok;
-		else if (!ok && this.optional)
-			return true;
+		else if (!ok && this.optional && descriptor.index == descriptor.route.length)
+			ok = true;
 		return ok;
 	};
 
@@ -121,13 +132,13 @@
 		return new RouteStep();
 	};
 
-	function Match(route, index) {
+	function Matched(route, index) {
 		this.route = route;
 		this.index = index;
 		this.params = {};
 	}
 
-	Match.prototype.toString = function() {
+	Matched.prototype.toString = function() {
 		return '/' + this.route.join('/') + ' (' + this.index + ':' + JSON.stringify(this.params) + ')';
 	};
 
@@ -147,9 +158,9 @@
 				route.shift();
 			if (route[route.length - 1] === '')
 				route.pop();
-			descriptor = new Match(route, 0);
+			descriptor = new Matched(route, 0);
 		} else
-			descriptor = new Match(descriptor.route, this.parsed.local ? descriptor.index : 0);
+			descriptor = new Matched(descriptor.route, this.parsed.local ? descriptor.index : 0);
 		if (!this.parsed.match(descriptor))
 			return false;
 		return descriptor;
