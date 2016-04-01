@@ -152,17 +152,21 @@
 	};
 
 	Route.prototype.match = function(descriptor) {
+		var firstIndex = 0;
 		if (typeof descriptor === 'string') {
 			var route = descriptor.split('/');
 			if (route[0] === '')
 				route.shift();
 			if (route[route.length - 1] === '')
 				route.pop();
-			descriptor = new Matched(route, 0);
-		} else
-			descriptor = new Matched(descriptor.route, this.parsed.local ? descriptor.index : 0);
+			descriptor = new Matched(route, firstIndex);
+		} else {
+			firstIndex = this.parsed.local ? descriptor.index : 0;
+			descriptor = new Matched(descriptor.route, firstIndex);
+		}
 		if (!this.parsed.match(descriptor))
 			return false;
+		descriptor.matched = descriptor.index ? descriptor.route.slice(0, descriptor.index).join('/') : '';
 		return descriptor;
 	};
 
